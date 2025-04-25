@@ -12,7 +12,7 @@ pip install harami
 
 ## Usage
 
-Let's try a "learn by example" approach. The following code is a Widget Factory implementation. The Widget Factory raises an event on Widget Creation, it also emits the Widgets it creates through an Observable. The MyApp class creates an instance of the Widget Factory, adds an event handler, and also adds an observer, then requests the factory create a Widget.
+Let's try a "learn by example" approach. The following code is a Widget Factory implementation. The Widget Factory raises an event on Widget Creation, it also emits the Widgets it creates through an Observable. The MyApp class creates an instance of the Widget Factory, adds an event handler, adds an observer, and finally requests the factory create a Widget.
 
 ```python
 from harami import *
@@ -56,7 +56,7 @@ class MyApp:
         print(f'Widget Emitted: color is {e.widget.color}')
 
     def run(self) -> None:
-        self.__eventExample.createWidget('red')
+        self.__widgetFactory.createWidget('red')
 
 MyApp().run()
 ```
@@ -78,11 +78,11 @@ Things not obvious given the example above:
 * Event Handlers can be async, whether or not the Event Source is async.
 * Event Sources can be async, whether or not event handlers are async.
 * Event Handlers receive an EventArgs, which you can optionally subclass as seen in the example.
-* All `*args` and `*kwargs` passed to an Event Source are forwarded via an `args` attribute of type `tuple` and a `kwargs` attribute of type `dict`, both accessible on `EventArgs` and any `EventArgs` subclass. You can use these in the raw for downstream method invocations or wrap them behind properties as seen in the example above.
+* All `*args` and `**kwargs` passed to an Event Source are forwarded via an `args` attribute of type `tuple` and a `kwargs` attribute of type `dict`, both accessible on `EventArgs` and any `EventArgs` subclass. You can use these in the raw for downstream method invocations or wrap them behind type-hinted properties as seen in the example above.
 * Observers can be async, even though observables do not expose an async/coro signature.
 * Observables provide a value-assignment syntax, ex: `myObserver.state = 'foo'` if that is preferred, this also simplifies using an observable to back properties.
 * Events offer `addHandler()` and `removeHandler()`, observables offer `attach()` and `detach()`, each as respective alternatives to the `+=` and `-=` shorthand syntax seen in the example.
-* Last, but not least, Observables and be used as Event Handlers, and Event Sources can be used as Observers.
+* Last, but not least, Observables can be used as Event Handlers, and Event Sources can be used as Observers.
 
 This library is meant to be lightweight and not have dependencies on other libraries, as such it has an intentionally narrow focus.
 

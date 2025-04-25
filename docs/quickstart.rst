@@ -16,7 +16,7 @@ You can install the library from `PyPI <https://pypi.org/project/harami/>`_ usin
 Usage
 ----------------------
 
-Let's try a "learn by example" approach. The following code is a Widget Factory implementation. The Widget Factory raises an event on Widget Creation, it also emits the Widgets it creates through an Observable. The MyApp class creates an instance of the Widget Factory, adds an event handler, and also adds an observer, then requests the factory create a Widget.
+Let's try a "learn by example" approach. The following code is a Widget Factory implementation. The Widget Factory raises an event on Widget Creation, it also emits the Widgets it creates through an Observable. The MyApp class creates an instance of the Widget Factory, adds an event handler, adds an observer, and finally requests the factory create a Widget.
 
 .. code:: python
 
@@ -61,7 +61,7 @@ Let's try a "learn by example" approach. The following code is a Widget Factory 
             print(f'Widget Emitted: color is {e.widget.color}')
 
         def run(self) -> None:
-            self.__eventExample.createWidget('red')
+            self.__widgetFactory.createWidget('red')
 
     MyApp().run()
 
