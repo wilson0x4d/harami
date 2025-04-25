@@ -33,6 +33,9 @@ Methods
     :param Observer observer: A callable that accepts a single parameter (the state being observed.)
 
 
+.. tip:: Attempting to attach an Observer more than once to a single Observable results in only a single attachment. Conversely, an Observer can be attached to multiples Observables.
+
+
 .. py:method:: Observable.detach(observer)
 
     Detach an Observer.
@@ -80,4 +83,3 @@ Methods
     # Outputs: "Observing foo" and "Observing bar", but not "Observing baz"
 
 
-.. tip:: Attempting to attach an Observer more than once to a single Observable results in only a single attachment. Conversely, an Observer can be attached to multiples Observables.

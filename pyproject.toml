@@ -1,7 +1,7 @@
 [project]
 name = "harami"
 version = "0.0.0"
-description = "A lightweight 'Event' and 'Observer' library."
+description = "A lightweight 'Event' and 'Observable' library."
 keywords = ["event", "eventhandler", "observable", "observer"]
 authors = [
     { name="Shaun Wilson", email="mrshaunwilson@msn.com" }

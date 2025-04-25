@@ -1,4 +1,4 @@
-`harami` is a lightweight "Event" and "Observer" library for Python.
+`harami` is a lightweight "Event" and "Observable" library for Python.
 
 This README is only a high-level introduction to **harami**. For more detailed documentation, please view the official docs at [https://harami.readthedocs.io](https://harami.readthedocs.io).
 
