@@ -36,7 +36,7 @@ Let's try a "learn by example" approach. The following code is a Widget Factory 
         def __init__(self) -> None:
             self.widgetEmitter = Observable[Widget]()
 
-        @event
+        @event(WidgetEventArgs)
         def onWidgetCreated(self, widget:Widget) -> None:
             # this is an "Event Source", it does not require an
             # implementation, but one can be provided if it

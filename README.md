@@ -31,7 +31,7 @@ class WidgetFactory:
     def __init__(self) -> None:
         self.widgetEmitter = Observable[Widget]()
 
-    @event
+    @event(WidgetEventArgs)
     def onWidgetCreated(self, widget:Widget) -> None:
         # this is an "Event Source", it does not require an
         # implementation, but one can be provided if it
@@ -73,15 +73,16 @@ Widget Emitted: color is red
 Things not obvious given the example above:
 
 * Events and Observables can be declared at a module scope (classes are not required.)
-* The names you use for events, observables, handlers, and observers are not relevant, name things as you please.
-* The scoping (public vs. private) of members and functions is not important, scope as you please.
+* There are not visibility restrictiosn for events/observables nor handlers/observers.
 * Event Handlers can be async, whether or not the Event Source is async.
-* Event Sources can be async, whether or not event handlers are async.
+* Event Sources can be async, whether or not Event Handlers are async.
 * Event Handlers receive an EventArgs, which you can optionally subclass as seen in the example.
-* All `*args` and `**kwargs` passed to an Event Source are forwarded via an `args` attribute of type `tuple` and a `kwargs` attribute of type `dict`, both accessible on `EventArgs` and any `EventArgs` subclass. You can use these in the raw for downstream method invocations or wrap them behind type-hinted properties as seen in the example above.
+* All `*args` and `**kwargs` passed to an Event Source are forwarded via an `args` attribute of type `tuple` and a `kwargs` attribute of type `dict`, both accessible via `EventArgs`.
+* An Event Source does not need to be parameterized, in such cases `EventArgs.empty` will be forwarded.
+* An `EventArgs` subclass does not need to be specified via `@event` (it defaults to `EventArgs`).
 * Observers can be async, even though observables do not expose an async/coro signature.
-* Observables provide a value-assignment syntax, ex: `myObserver.state = 'foo'` if that is preferred, this also simplifies using an observable to back properties.
-* Events offer `addHandler()` and `removeHandler()`, observables offer `attach()` and `detach()`, each as respective alternatives to the `+=` and `-=` shorthand syntax seen in the example.
+* Observables provide a value-assignment syntax, ex: `myObserver.state = 'foo'`, this may help simplify using observables to back properties.
+* Events offer `addHandler()`/`removeHandler()`, and observables offer `attach()`/`detach()`, each as alternatives to `+=`/`-=` syntax as seen in the example.
 * Last, but not least, Observables can be used as Event Handlers, and Event Sources can be used as Observers.
 
 This library is meant to be lightweight and not have dependencies on other libraries, as such it has an intentionally narrow focus.
