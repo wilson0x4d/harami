@@ -1,7 +1,7 @@
 Overview
 ========
 
-**harami** is an "Events" and "Observers" library for Python.
+**harami** (ハラミ) is an "Event" and "Observable" library for Python.
 
 .. toctree::
    :maxdepth: 2
