@@ -21,7 +21,11 @@ Decorators
 
     @event
     def onStateChanged(state:Any):
-        print(f'New State: {state}')
+        pass
+    onStateChanged += lambda s,e: print(f'New State: {e.args}')
+    onStateChanged('Hello, World!')
+    # outputs to console
+    # New State: ['Hello, World!']
 
 .. rubric:: Example (methods):
 
@@ -29,7 +33,20 @@ Decorators
 
     from harami import event
 
-    class MyClass:
+    class Foo:
         @event
         def onStateChanged(self, state:Any):
-            print(f'New State: {state}'')
+            pass
+
+    class Bar:
+        def __init__(self, foo:Foo) -> None:
+            self.__foo = foo
+            self.__foo.onStateChanged += self.__myEventHandler
+        def __myEventHandler(self:object, e:EventArgs) -> None:
+            print(f'New State: {e:args})
+
+    foo = Foo()
+    bar = Bar(foo)
+    foo.onStateChanged('Hello, World!')
+    # outputs to console
+    # New State: ['Hello, World!']
