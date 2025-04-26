@@ -73,7 +73,7 @@ Widget Emitted: color is red
 Things not obvious given the example above:
 
 * Events and Observables can be declared at a module scope (classes are not required.)
-* There are not visibility restrictiosn for events/observables nor handlers/observers.
+* There are no visibility restrictions (public vs. private) for events/observables nor handlers/observers.
 * Event Handlers can be async, whether or not the Event Source is async.
 * Event Sources can be async, whether or not Event Handlers are async.
 * Event Handlers receive an EventArgs, which you can optionally subclass as seen in the example.
