@@ -3,16 +3,13 @@
 
 import asyncio
 from types import MethodType
-from typing import Any, Callable, ForwardRef, Generic, Optional, TypeVar
+from typing import Generic, Optional, TypeVar
 
-from .events import EventArgs
+from .EventArgs import EventArgs
+from .Observer import Observer
 
 
 T = TypeVar('T')
-
-type Observer = Callable[[T|None], None]
-
-Observable = ForwardRef('Observable')
 
 class Observable(Generic[T]):
 
@@ -26,7 +23,7 @@ class Observable(Generic[T]):
         self.__observers = set()
         self.__state = None
 
-    def __call__(self, *state:Optional[T]) -> T:
+    def __call__(self, *state:Optional[T]) -> T|None:
         if len(state) > 1 and isinstance(state[1], EventArgs):
             self.state = state[1]            
         elif len(state) > 0:
@@ -34,10 +31,10 @@ class Observable(Generic[T]):
         else:
             return self.state
 
-    def __iadd__(self, observer:Observer) -> Observable:
+    def __iadd__(self, observer:Observer) -> 'Observable':
         return self.attach(observer)
 
-    def __isub__(self, observer:Observer) -> Observable:
+    def __isub__(self, observer:Observer) -> 'Observable':
         return self.detach(observer)
 
     @property
@@ -50,7 +47,7 @@ class Observable(Generic[T]):
     def state(self, state:T|None) -> None:
         self.notify(state)
 
-    def attach(self, observer:Observer) -> Observable:
+    def attach(self, observer:Observer) -> 'Observable':
         """
         Attach an Observer.
 
@@ -61,7 +58,7 @@ class Observable(Generic[T]):
         self.__observers.add(observer)
         return self
 
-    def detach(self, observer:Observer) -> Observable:
+    def detach(self, observer:Observer) -> 'Observable':
         """
         Detach an Observer.
 
@@ -90,9 +87,12 @@ class Observable(Generic[T]):
                 argCount = observer.__code__.co_argcount
                 if type(observer) is MethodType:
                     argCount -= 1
-                args = [None] * argCount
+                args = []
                 if argCount > 0:
-                    args[0] = state
+                    args.append(state)
+                    argCount -= 1
+                while argCount > 0:
+                    args.append(None)
                 x = observer(*args)
             else:
                 # brute attempt to dispatch

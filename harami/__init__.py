@@ -1,14 +1,21 @@
 # SPDX-FileCopyrightText: Copyright (C) Shaun Wilson
 # SPDX-License-Identifier: MIT
 
-from .events import EventArgs, EventHandler, event
-from .observables import Observable, Observer
+from .EventArgs import EventArgs
+from .EventHandler import EventHandler
+from .EventSource import EventSource, event
+from .Observable import Observable
+from .Observer import Observer
 
 __version__ = '0.0.0'
 __commit__ = '0abc123'
 
 __all__ = [
     '__version__', '__commit__',
-    'EventArgs', 'EventHandler', 'event',
-    'Observable', 'Observer'
+    'EventArgs',
+    'EventHandler',
+    'EventSource',
+    'event',
+    'Observable',
+    'Observer'
 ]
