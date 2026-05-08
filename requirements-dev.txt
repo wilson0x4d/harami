@@ -1,5 +1,0 @@
--r requirements.txt
-build
-setuptools
-twine
-punit>=1.1.4

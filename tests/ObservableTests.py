@@ -1,9 +1,9 @@
-# SPDX-FileCopyrightText: Copyright (C) Shaun Wilson
+# SPDX-FileCopyrightText: © 2025 Shaun Wilson
 # SPDX-License-Identifier: MIT
 
 import asyncio
 from harami import *
-from punit import *
+from punit import fact
 
 
 class ObservableTests:
@@ -13,8 +13,8 @@ class ObservableTests:
         o:Observable[int] = Observable()
         #
         class X:
-            s1_last:int = None
-            s2_last:int = None
+            s1_last:int|None = None
+            s2_last:int|None = None
             def s1(self, v:int):
                 self.s1_last = v
             def s2(self, v:int):

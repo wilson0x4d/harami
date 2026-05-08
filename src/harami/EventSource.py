@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (C) Shaun Wilson
+# SPDX-FileCopyrightText: © 2025 Shaun Wilson
 # SPDX-License-Identifier: MIT
 
 import asyncio
@@ -7,16 +7,15 @@ from typing import Any, Callable, ForwardRef, cast
 
 from .EventArgs import EventArgs
 from .EventHandler import EventHandler
-
-Observable = ForwardRef('Observable')
+from .Observable import Observable
 
 class EventSource:
 
     __eventargs:type
-    __func:MethodType|FunctionType|None
+    __func:Callable[..., Any]|None
     __handlers:set[EventHandler]
 
-    def __init__(self, func:MethodType|FunctionType|None, eventargs:type = EventArgs):
+    def __init__(self, func:Callable[..., Any]|None, eventargs:type = EventArgs):
         self.__eventargs = eventargs
         self.__func = func
         self.__handlers = set()

@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (C) Shaun Wilson
+# SPDX-FileCopyrightText: © 2025 Shaun Wilson
 # SPDX-License-Identifier: MIT
 
 import asyncio
@@ -44,8 +44,8 @@ class FakeEventProvider:
         self.async_was_executed = True
         return the_data.decode()
     
-sync_event_type_received:FakeEventTypeEnum = None
-sync_event_data_received:bytes = None
+sync_event_type_received:FakeEventTypeEnum|None = None
+sync_event_data_received:bytes|None = None
 sync_handler1_was_executed = False
 sync_handler2_was_executed = False
 
@@ -81,11 +81,11 @@ async def sync_events_signal_handlers() -> None:
     assert sync_handler1_was_executed
     assert sync_handler2_was_executed
     assert sync_event_type_received == FakeEventTypeEnum.ONE
-    assert sync_event_data_received.decode() == expectedData.decode()
+    assert sync_event_data_received is not None and sync_event_data_received.decode() == expectedData.decode()
     assert target.sync_was_executed
 
-async_event_type_received:FakeEventTypeEnum = None
-async_event_data_received:bytes = None
+async_event_type_received:FakeEventTypeEnum|None = None
+async_event_data_received:bytes|None = None
 async_handler1_was_executed = False
 async_handler2_was_executed = False
 
@@ -121,7 +121,7 @@ async def async_events_signal_handlers() -> None:
     assert async_handler1_was_executed
     assert async_handler2_was_executed
     assert async_event_type_received == FakeEventTypeEnum.TWO
-    assert async_event_data_received.decode() == expectedData.decode()
+    assert async_event_data_received is not None and async_event_data_received.decode() == expectedData.decode()
     assert target.async_was_executed
 
 

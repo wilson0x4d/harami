@@ -7,14 +7,22 @@ authors = [
     { name="Shaun Wilson", email="mrshaunwilson@msn.com" }
 ]
 readme = "README.md"
-requires-python = ">=3.12"
+license = "MIT"
 classifiers = [
-    "License :: OSI Approved :: MIT License",
+    "Intended Audience :: Developers",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
-    "Topic :: Software Development :: Libraries :: Python Modules",
-    "Intended Audience :: Developers"
+    "Programming Language :: Python",
+    "Topic :: Software Development :: Libraries :: Python Modules"
+]
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "coverage",
+    "mypy",
+    "punit (>=1.4)",
+    "twine"
 ]
 
 [project.urls]
@@ -22,16 +30,5 @@ Documentation = "https://harami.readthedocs.io/"
 Homepage = "https://github.com/wilson0x4d/harami"
 Repository = "https://github.com/wilson0x4d/harami.git"
 
-[build-system]
-requires = ["setuptools"]
-build-backend = "setuptools.build_meta"
-
-[tool.setuptools.packages.find]
-exclude = [
-    "docs",
-    "tests",
-    "tests.*",
-    ".scripts",
-    ".gitea",
-    ".venv-*"
-]
+[tool.setuptools.package-data]
+"harami" = ["py.typed"]

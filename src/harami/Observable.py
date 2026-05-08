@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (C) Shaun Wilson
+# SPDX-FileCopyrightText: © 2025 Shaun Wilson
 # SPDX-License-Identifier: MIT
 
 import asyncio
@@ -26,8 +26,10 @@ class Observable(Generic[T]):
     def __call__(self, *state:Optional[T]) -> T|None:
         if len(state) > 1 and isinstance(state[1], EventArgs):
             self.state = state[1]            
+            return None
         elif len(state) > 0:
             self.state = state[0]
+            return None
         else:
             return self.state
 
