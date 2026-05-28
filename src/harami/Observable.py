@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: © 2025 Shaun Wilson
 # SPDX-License-Identifier: MIT
 
+from __future__ import annotations
+
 import asyncio
 from types import MethodType
 from typing import Generic, Optional, TypeVar
@@ -11,10 +13,11 @@ from .Observer import Observer
 
 T = TypeVar('T')
 
+
 class Observable(Generic[T]):
 
-    __observers:set[Observer]
-    __state:T|None
+    __observers: set[Observer]
+    __state: T | None
 
     def __init__(self):
         """
@@ -23,9 +26,9 @@ class Observable(Generic[T]):
         self.__observers = set()
         self.__state = None
 
-    def __call__(self, *state:Optional[T]) -> T|None:
+    def __call__(self, *state: Optional[T]) -> T | None:
         if len(state) > 1 and isinstance(state[1], EventArgs):
-            self.state = state[1]            
+            self.state = state[1]
             return None
         elif len(state) > 0:
             self.state = state[0]
@@ -33,23 +36,24 @@ class Observable(Generic[T]):
         else:
             return self.state
 
-    def __iadd__(self, observer:Observer) -> 'Observable':
+    def __iadd__(self, observer: Observer) -> Observable:
         return self.attach(observer)
 
-    def __isub__(self, observer:Observer) -> 'Observable':
+    def __isub__(self, observer: Observer) -> Observable:
         return self.detach(observer)
 
     @property
-    def state(self) -> T|None:
+    def state(self) -> T | None:
         """
         The most-recent state of the Observable.
         """
         return self.__state
+
     @state.setter
-    def state(self, state:T|None) -> None:
+    def state(self, state: T | None) -> None:
         self.notify(state)
 
-    def attach(self, observer:Observer) -> 'Observable':
+    def attach(self, observer: Observer) -> Observable:
         """
         Attach an Observer.
 
@@ -60,7 +64,7 @@ class Observable(Generic[T]):
         self.__observers.add(observer)
         return self
 
-    def detach(self, observer:Observer) -> 'Observable':
+    def detach(self, observer: Observer) -> Observable:
         """
         Detach an Observer.
 
@@ -72,7 +76,7 @@ class Observable(Generic[T]):
             pass
         return self
 
-    def notify(self, state:T|None) -> None:
+    def notify(self, state: T | None) -> None:
         """
         Notifies attached Observers of a state change.
         """
@@ -86,14 +90,14 @@ class Observable(Generic[T]):
                 # 2) observers which have more than one arg
                 #
                 # "officially" harami only "supports" single-arg observers.
-                argCount = observer.__code__.co_argcount
+                arg_count = observer.__code__.co_argcount
                 if type(observer) is MethodType:
-                    argCount -= 1
+                    arg_count -= 1
                 args = []
-                if argCount > 0:
+                if arg_count > 0:
                     args.append(state)
-                    argCount -= 1
-                while argCount > 0:
+                    arg_count -= 1
+                while arg_count > 0:
                     args.append(None)
                 x = observer(*args)
             else:
@@ -101,3 +105,6 @@ class Observable(Generic[T]):
                 x = observer(state)
             if x is not None and asyncio.coroutines.iscoroutine(x):
                 asyncio.create_task(x)
+
+
+__all__ = ['Observable']

@@ -1,21 +1,24 @@
 # SPDX-FileCopyrightText: © 2025 Shaun Wilson
 # SPDX-License-Identifier: MIT
 
+from __future__ import annotations
+
 import asyncio
 from types import FunctionType, MethodType
-from typing import Any, Callable, ForwardRef, cast
+from typing import Any, Callable, Optional, cast
 
 from .EventArgs import EventArgs
 from .EventHandler import EventHandler
 from .Observable import Observable
 
+
 class EventSource:
 
-    __eventargs:type
-    __func:Callable[..., Any]|None
-    __handlers:set[EventHandler]
+    __eventargs: type
+    __func: Callable[..., Any] | None
+    __handlers: set[EventHandler]
 
-    def __init__(self, func:Callable[..., Any]|None, eventargs:type = EventArgs):
+    def __init__(self, func: Optional[Callable[..., Any]], eventargs: type = EventArgs):
         self.__eventargs = eventargs
         self.__func = func
         self.__handlers = set()
@@ -33,42 +36,42 @@ class EventSource:
             # if non-EventArgs args are provided pass them to constructor for the `@event(x)` specified `EventArgs` type `x`
             # except when..
             # no EventArgs type was defined via @event(), pass `EventArgs.empty`
-            e:EventArgs = EventArgs.empty if len(args) <= 1 else cast(EventArgs, args[1]) if len(args) > 1 and args[1] is object and issubclass(args[1], EventArgs) else eventargs(*args[1:], **kwargs) if eventargs is not None else EventArgs.empty
+            e: EventArgs = EventArgs.empty if len(args) <= 1 else cast(EventArgs, args[1]) if len(args) > 1 and args[1] is object and issubclass(args[1], EventArgs) else eventargs(*args[1:], **kwargs) if eventargs is not None else EventArgs.empty
             x = handler(sender, e)
             if x is not None and asyncio.coroutines.iscoroutine(x):
                 asyncio.create_task(x)
         return result
-    
-    def __get__(self, instance:Any, owner:Any = None):
+
+    def __get__(self, instance: Any, owner: Any = None):
         if instance is None:
             return owner
         else:
             return MethodType(self, instance)
-    
-    def __iadd__(self, handler:EventHandler|Observable) -> 'EventSource':
-        return self.addHandler(handler)
 
-    def __isub__(self, handler:EventHandler|Observable) -> 'EventSource':
-        return self.removeHandler(handler)
+    def __iadd__(self, handler: EventHandler | Observable) -> EventSource:
+        return self.add_handler(handler)
+
+    def __isub__(self, handler: EventHandler | Observable) -> EventSource:
+        return self.remove_handler(handler)
 
     @property
-    def hasHandlers(self) -> bool:
+    def has_handlers(self) -> bool:
         return len(self.__handlers) > 0
 
-    def addHandler(self, handler:EventHandler|Observable) -> 'EventSource':
+    def add_handler(self, handler: EventHandler | Observable) -> EventSource:
         self.__handlers.add(handler)
         return self
 
-    def removeHandler(self, handler:EventHandler|Observable) -> 'EventSource':
+    def remove_handler(self, handler: EventHandler | Observable) -> EventSource:
         self.__handlers.remove(handler)
         return self
 
-    def wrap(self, func:MethodType|FunctionType) -> Callable[[Any], Any]:
+    def wrap(self, func: MethodType | FunctionType) -> Callable[[Any], Any]:
         self.__func = func
         return self
 
 
-def event(eventargs = None) -> Callable:
+def event(eventargs=None) -> Callable:
     global EventSource
     if eventargs is None:
         return EventSource
@@ -76,3 +79,9 @@ def event(eventargs = None) -> Callable:
         return EventSource(eventargs, EventArgs)
     else:
         return (EventSource(None, eventargs)).wrap
+
+
+__all__ = [
+    'EventSource',
+    'event'
+]

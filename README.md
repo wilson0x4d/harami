@@ -1,4 +1,4 @@
-`harami` (ハラミ) is a lightweight "Event" and "Observable" (aka "Signals") library for Python.
+`harami` (ハラミ) is a lightweight "Signals" library for Python.
 
 This README is only a high-level introduction to **harami**. For more detailed documentation, please view the official docs at [https://harami.readthedocs.io](https://harami.readthedocs.io).
 
@@ -19,7 +19,7 @@ from harami import *
 
 class Widget:
     color:str
-    def __init__(self, color:str = None) -> None:
+    def __init__(self, color: str = None) -> None:
         self.color = color
 
 class WidgetEventArgs(EventArgs):
@@ -29,34 +29,34 @@ class WidgetEventArgs(EventArgs):
 
 class WidgetFactory:
     def __init__(self) -> None:
-        self.widgetEmitter = Observable[Widget]()
+        self.widget_emitter = Observable[Widget]()
 
     @event(WidgetEventArgs)
-    def onWidgetCreated(self, widget:Widget) -> None:
+    def on_widget_created(self, widget: Widget) -> None:
         # this is an "Event Source", it does not require an
         # implementation, but one can be provided if it
         # makes sense for your application
         pass
 
-    def createWidget(color:str) -> None:
+    def create_widget(color: str) -> None:
         widget = Widget(color)
-        self.onWidgetCreated(widget)
-        self.widgetEmitter(widget)
+        self.on_widget_created(widget)
+        self.widget_emitter(widget)
 
 class MyApp:
     def __init__(self) -> None:
-        self.__widgetFactory = WidgetFactory()
-        self.__widgetFactory.onWidgetCreated += self.__onWidgetCreatedHandler
-        self.__widgetFactory.widgetEmitter += self.__widgetObserver
+        self.__widget_factory = WidgetFactory()
+        self.__widget_factory.on_widget_created += self.__on_widget_created_handler
+        self.__widget_factory.widget_emitter += self.__widget_observer
 
-    def __onWidgetCreatedHandler(sender:object, e:WidgetEventArgs) -> None:
+    def __on_widget_created_handler(sender:object, e: WidgetEventArgs) -> None:
         print(f'Widget Created: color is {e.widget.color}')
 
-    def __widgetObserver(widget:Widget) -> None:
+    def __widget_observer(widget: Widget) -> None:
         print(f'Widget Emitted: color is {e.widget.color}')
 
     def run(self) -> None:
-        self.__widgetFactory.createWidget('red')
+        self.__widget_factory.create_widget('red')
 
 MyApp().run()
 ```
@@ -82,7 +82,7 @@ Things not obvious given the example above:
 * An `EventArgs` subclass does not need to be specified via `@event` (it defaults to `EventArgs`).
 * Observers can be async, even though observables do not expose an async/coro signature.
 * Observables provide a value-assignment syntax, ex: `myObserver.state = 'foo'`, this may help simplify using observables to back properties.
-* Events offer `addHandler()`/`removeHandler()`, and observables offer `attach()`/`detach()`, each as alternatives to `+=`/`-=` syntax as seen in the example.
+* Events offer `add_handler()`/`remove_handler()`, and observables offer `attach()`/`detach()`, each as alternatives to `+=`/`-=` syntax as seen in the example.
 * Last, but not least, Observables can be used as Event Handlers, and Event Sources can be used as Observers.
 
 This library is meant to be lightweight and not have dependencies on other libraries, as such it has an intentionally narrow focus.

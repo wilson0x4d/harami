@@ -20,10 +20,10 @@ Decorators
     from harami import event
 
     @event
-    def onStateChanged(state:Any):
+    def on_state_changed(state: any):
         pass
-    onStateChanged += lambda s,e: print(f'New State: {e.args}')
-    onStateChanged('Hello, World!')
+    on_state_changed += lambda s,e: print(f'New State: {e.args}')
+    on_state_changed('Hello, World!')
     # outputs to console
     # New State: ['Hello, World!']
 
@@ -35,18 +35,18 @@ Decorators
 
     class Foo:
         @event
-        def onStateChanged(self, state:Any):
+        def on_state_changed(self, state:Any):
             pass
 
     class Bar:
         def __init__(self, foo:Foo) -> None:
             self.__foo = foo
-            self.__foo.onStateChanged += self.__myEventHandler
-        def __myEventHandler(self:object, e:EventArgs) -> None:
-            print(f'New State: {e:args})
+            self.__foo.on_state_changed += self.__my_event_handler
+        def __my_event_handler(self: object, e: EventArgs) -> None:
+            print(f'New State: {e.args})
 
     foo = Foo()
     bar = Bar(foo)
-    foo.onStateChanged('Hello, World!')
+    foo.on_state_changed('Hello, World!')
     # outputs to console
     # New State: ['Hello, World!']

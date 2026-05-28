@@ -3,8 +3,8 @@
 
 import asyncio
 from enum import IntEnum
-from harami import *
-from punit import *
+from harami import EventArgs, event
+from punit import fact
 
 
 class FakeEventTypeEnum(IntEnum):
@@ -23,7 +23,7 @@ class FakeEventArgs(EventArgs):
     @property
     def data(self) -> bytes:
         return self.args[1]
-    
+
 
 class FakeEventProvider:
     """A fake concrete class that exposes events."""
@@ -33,26 +33,28 @@ class FakeEventProvider:
         self.async_was_executed = False
 
     @event(FakeEventArgs)
-    def sync_event(self, the_type:FakeEventTypeEnum, the_data:bytes) -> str:
+    def sync_event(self, the_type: FakeEventTypeEnum, the_data: bytes) -> str:
         """A synchronous Event Source."""
         self.sync_was_executed = True
         return the_data.decode()
 
     @event(FakeEventArgs)
-    async def async_event(self, the_type:FakeEventTypeEnum, the_data:bytes) -> str:
+    async def async_event(self, the_type: FakeEventTypeEnum, the_data: bytes) -> str:
         """An asynchronous Event Source."""
         self.async_was_executed = True
         return the_data.decode()
-    
-sync_event_type_received:FakeEventTypeEnum|None = None
-sync_event_data_received:bytes|None = None
+
+
+sync_event_type_received: FakeEventTypeEnum | None = None
+sync_event_data_received: bytes | None = None
 sync_handler1_was_executed = False
 sync_handler2_was_executed = False
+
 
 @fact
 async def sync_events_signal_handlers() -> None:
     # arrange
-    def handler1(sender:object, e:FakeEventArgs):
+    def handler1(sender: object, e: FakeEventArgs):
         global sync_handler1_was_executed
         global sync_event_type_received
         assert sender is not None
@@ -60,7 +62,8 @@ async def sync_events_signal_handlers() -> None:
         sync_handler1_was_executed = True
         sync_event_type_received = e.type
     # NOTE: even though Event Source is non-async, async handlers are permitted (requires an active event loop in the call context.)
-    async def handler2(sender:object, e:FakeEventArgs):
+
+    async def handler2(sender: object, e: FakeEventArgs):
         global sync_handler2_was_executed
         global sync_event_data_received
         assert sender is not None
@@ -68,11 +71,11 @@ async def sync_events_signal_handlers() -> None:
         sync_handler2_was_executed = True
         sync_event_data_received = e.data
     target = FakeEventProvider()
-    target.sync_event.addHandler(handler1)
-    target.sync_event.addHandler(handler2)
-    expectedData = "Hello, World!".encode()
+    target.sync_event.add_handler(handler1)
+    target.sync_event.add_handler(handler2)
+    expected_data = "Hello, World!".encode()
     # act
-    result = target.sync_event(FakeEventTypeEnum.ONE, expectedData)
+    result = target.sync_event(FakeEventTypeEnum.ONE, expected_data)
     # NOTE: calling `sleep` gives async event handlers an opportunity to execute
     while len(asyncio.all_tasks()) > 1:
         await asyncio.sleep(0)
@@ -81,18 +84,19 @@ async def sync_events_signal_handlers() -> None:
     assert sync_handler1_was_executed
     assert sync_handler2_was_executed
     assert sync_event_type_received == FakeEventTypeEnum.ONE
-    assert sync_event_data_received is not None and sync_event_data_received.decode() == expectedData.decode()
+    assert sync_event_data_received is not None and sync_event_data_received.decode() == expected_data.decode()
     assert target.sync_was_executed
 
-async_event_type_received:FakeEventTypeEnum|None = None
-async_event_data_received:bytes|None = None
+async_event_type_received: FakeEventTypeEnum | None = None
+async_event_data_received: bytes | None = None
 async_handler1_was_executed = False
 async_handler2_was_executed = False
+
 
 @fact
 async def async_events_signal_handlers() -> None:
     # arrange
-    async def handler1(sender:object, e:FakeEventArgs):
+    async def handler1(sender: object, e: FakeEventArgs):
         global async_handler1_was_executed
         global async_event_type_received
         assert sender is not None
@@ -100,7 +104,8 @@ async def async_events_signal_handlers() -> None:
         async_handler1_was_executed = True
         async_event_type_received = e.type
     # NOTE: even though Event Source is async, it is permitted to use sync handlers
-    def handler2(sender:object, e:FakeEventArgs):
+
+    def handler2(sender: object, e: FakeEventArgs):
         global async_handler2_was_executed
         global async_event_data_received
         assert sender is not None
@@ -108,11 +113,11 @@ async def async_events_signal_handlers() -> None:
         async_handler2_was_executed = True
         async_event_data_received = e.data
     target = FakeEventProvider()
-    target.async_event.addHandler(handler1)
-    target.async_event.addHandler(handler2)
-    expectedData = "Hello, World!".encode()
+    target.async_event.add_handler(handler1)
+    target.async_event.add_handler(handler2)
+    expected_data = "Hello, World!".encode()
     # act
-    result = await target.async_event(FakeEventTypeEnum.TWO, expectedData)
+    result = await target.async_event(FakeEventTypeEnum.TWO, expected_data)
     # NOTE: calling `sleep` gives async event handlers an opportunity to execute
     while len(asyncio.all_tasks()) > 1:
         await asyncio.sleep(0)
@@ -121,7 +126,7 @@ async def async_events_signal_handlers() -> None:
     assert async_handler1_was_executed
     assert async_handler2_was_executed
     assert async_event_type_received == FakeEventTypeEnum.TWO
-    assert async_event_data_received is not None and async_event_data_received.decode() == expectedData.decode()
+    assert async_event_data_received is not None and async_event_data_received.decode() == expected_data.decode()
     assert target.async_was_executed
 
 
@@ -137,19 +142,19 @@ class FakeEventConsumer:
         self.sender2 = None
         self.e2 = None
 
-    def handler1(self, sender:object, e:FakeEventArgs) -> None:
+    def handler1(self, sender: object, e: FakeEventArgs) -> None:
         self.handler1_was_executed = True
         self.sender1 = sender
         self.e1 = e
 
-    async def handler2(self, sender:object, e:FakeEventArgs) -> None:
+    async def handler2(self, sender: object, e: FakeEventArgs) -> None:
         self.handler2_was_executed = True
         self.sender2 = sender
         self.e2 = e
 
     @fact
     def class_can_event_sync(self) -> None:
-        self.target.sync_event.addHandler(self.handler1)
+        self.target.sync_event.add_handler(self.handler1)
         result = self.target.sync_event(FakeEventTypeEnum.ONE, 'Hello, World!'.encode())
         assert result == 'Hello, World!'
         assert self.handler1_was_executed
@@ -161,7 +166,7 @@ class FakeEventConsumer:
 
     @fact
     async def class_can_event_async(self) -> None:
-        self.target.async_event.addHandler(self.handler2)
+        self.target.async_event.add_handler(self.handler2)
         result = await self.target.async_event(FakeEventTypeEnum.TWO, 'Hello, World!'.encode())
         # NOTE: calling `sleep` gives async event handlers an opportunity to execute
         while len(asyncio.all_tasks()) > 1:

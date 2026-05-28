@@ -81,5 +81,3 @@ Methods
     subject.notify('baz')
 
     # Outputs: "Observing foo" and "Observing bar", but not "Observing baz"
-
-

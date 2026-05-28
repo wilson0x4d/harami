@@ -21,7 +21,7 @@ dependencies = []
 dev = [
     "coverage",
     "mypy",
-    "punit (>=1.4)",
+    "punit (>=1.4.5)",
     "twine"
 ]
 
